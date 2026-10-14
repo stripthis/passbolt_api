@@ -22,6 +22,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Routing\Router;
 use Passbolt\WebInstaller\Utility\WebInstaller;
+use Passbolt\WebInstaller\Utility\WebInstallerAccess;
 
 /**
  * Class WebInstallerController
@@ -78,6 +79,8 @@ class WebInstallerController extends Controller
     public function beforeFilter(EventInterface $event): ?Response
     {
         parent::beforeFilter($event);
+
+        WebInstallerAccess::assertIsAllowed($this->request);
 
         $systemCheckCtrl = ($this->request->getParam('controller') === 'SystemCheck');
         $systemCheckPage = ($this->request->getParam('action') === 'index');

@@ -22,6 +22,7 @@ use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Response;
 use Cake\Routing\Router;
+use Passbolt\WebInstaller\Utility\WebInstallerAccess;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -40,9 +41,12 @@ class WebInstallerMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler,
     ): ResponseInterface {
-        $uri = $request->getRequestTarget();
-        $targetInstallPage = preg_match('/^\/install/', $uri);
+        $path = $request->getUri()->getPath();
+        $targetInstallPage = preg_match('/^\/install/', $path);
 
+        if (!self::isConfigured() && $targetInstallPage && !$this->isInstallerAccessPage($path)) {
+            WebInstallerAccess::assertIsAllowed($request);
+        }
         if (!self::isConfigured() && !$targetInstallPage) {
             return (new Response())
                 ->withStatus(302)
@@ -53,6 +57,15 @@ class WebInstallerMiddleware implements MiddlewareInterface
         }
 
         return $handler->handle($request);
+    }
+
+    /**
+     * @param string $uri Request target.
+     * @return bool
+     */
+    private function isInstallerAccessPage(string $uri): bool
+    {
+        return preg_match('#^/install/?$#', $uri) === 1;
     }
 
     /**

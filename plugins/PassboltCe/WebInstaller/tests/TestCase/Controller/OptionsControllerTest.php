@@ -73,7 +73,7 @@ class OptionsControllerTest extends WebInstallerIntegrationTestCase
 
     public function testWebInstallerOptionPostSuccess_AdminAlreadyExists()
     {
-        $this->session(['webinstaller' => ['initialized' => true, 'hasAdmin' => true]]);
+        $this->initWebInstallerSession(['hasAdmin' => true]);
         $postData = [
             'full_base_url' => 'http://passbolt.dev',
             'force_ssl' => 0,
@@ -87,11 +87,10 @@ class OptionsControllerTest extends WebInstallerIntegrationTestCase
     {
         // hasSmtp + hasAdmin both true → skip email & account_creation.
         // Subscription is the next step on every edition (WP 7.4).
-        $this->session(['webinstaller' => [
-            'initialized' => true,
+        $this->initWebInstallerSession([
             'hasAdmin' => true,
             'hasSmtpSettings' => true,
-        ]]);
+        ]);
         $this->post('/install/options', [
             'full_base_url' => 'http://passbolt.dev',
             'force_ssl' => 0,
