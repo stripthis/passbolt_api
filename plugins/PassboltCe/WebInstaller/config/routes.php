@@ -26,7 +26,7 @@ $routes->plugin('Passbolt/WebInstaller', ['path' => '/install'], function (Route
     $routes->setExtensions(['json']);
 
     $routes->connect('/', ['controller' => 'GettingStarted', 'action' => 'index'])
-        ->setMethods(['GET']);
+        ->setMethods(['GET', 'POST']);
 
     $routes->connect('/system_check', ['controller' => 'SystemCheck', 'action' => 'index'])
         ->setMethods(['GET']);

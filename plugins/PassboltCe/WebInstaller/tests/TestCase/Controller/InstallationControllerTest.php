@@ -251,6 +251,17 @@ UZNFZWTIXO4n0jwpTTOt6DvtqeRyjjw2nK3XUSiJu3izvn0791l4tofy
         $this->assertStringContainsString('Installing', $data);
     }
 
+    public function testWebInstallerInstallationDoInstallForbiddenForRemoteClients()
+    {
+        $this->initWebInstallerSession();
+        $this->mockUserIp('198.51.100.42');
+        $this->session(['webinstaller' => ['initialized' => true]]);
+
+        $this->get('/install/installation/do_install.json');
+
+        $this->assertResponseCode(403);
+    }
+
     /**
      * @group triggerFilesystemChanges
      * @throws \PHPUnit\Exception

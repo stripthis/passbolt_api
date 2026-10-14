@@ -26,14 +26,35 @@ $this->assign('page_classes', 'setup start');
         <div class="row">
             <div class="col12 last intro">
                 <h1><?= __('Passbolt is not configured yet!') ?></h1>
-                <h2><?= __('If you see this page, it means that passbolt is present on your server but not configured. Click on "Get Started" to launch the configuration wizard.') ?></h2>
+                <h2><?= __('If you see this page, it means that passbolt is present on your server but not configured.') ?></h2>
                 <p>&nbsp;</p>
+                <?php if ($installerAuthorized): ?>
+                <p><?= __('Click on "Get Started" to launch the configuration wizard.') ?></p>
                 <p>
                     <a href="<?= Router::url('/install/system_check') ?>" class="button primary big">
                         <span class="svg-icon magic-wand icon-only"><svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1254 581l293-293-107-107-293 293zm447-293q0 27-18 45l-1286 1286q-18 18-45 18t-45-18l-198-198q-18-18-18-45t18-45l1286-1286q18-18 45-18t45 18l198 198q18 18 18 45zm-1351-190l98 30-98 30-30 98-30-98-98-30 98-30 30-98zm350 162l196 60-196 60-60 196-60-196-196-60 196-60 60-196zm930 478l98 30-98 30-30 98-30-98-98-30 98-30 30-98zm-640-640l98 30-98 30-30 98-30-98-98-30 98-30 30-98z"></path></svg></span>
                         <?= __('Get Started') ?>
                     </a>
                 </p>
+                <?php elseif ($accessKeyConfigured): ?>
+                <p><?= __('Enter the installer access key to launch the configuration wizard.') ?></p>
+                <?= $this->Form->create(null) ?>
+                <div class="input text required">
+                    <?= $this->Form->control($installerAccessKeyFieldName, [
+                        'label' => __('Installer access key'),
+                        'type' => 'password',
+                        'autocomplete' => 'off',
+                        'required' => true,
+                        'value' => '',
+                    ]) ?>
+                </div>
+                <p>
+                    <?= $this->Form->button(__('Unlock installer'), ['class' => 'button primary big']) ?>
+                </p>
+                <?= $this->Form->end() ?>
+                <?php else: ?>
+                <div class="message error"><?= h($installerDisabledMessage) ?></div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

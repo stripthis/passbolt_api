@@ -24,6 +24,7 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\ORM\TableRegistry;
 use Exception;
 use Passbolt\Subscription\Test\DummySubscriptionTrait;
+use Passbolt\WebInstaller\Utility\WebInstallerAccess;
 
 class WebInstallerIntegrationTestCase extends AppIntegrationTestCase
 {
@@ -33,6 +34,7 @@ class WebInstallerIntegrationTestCase extends AppIntegrationTestCase
 
     protected $_recover;
     protected $_configured;
+    protected mixed $_accessKey;
 
     /**
      * @var \Passbolt\Subscription\Model\Table\SubscriptionsTable
@@ -43,6 +45,10 @@ class WebInstallerIntegrationTestCase extends AppIntegrationTestCase
     {
         TableRegistry::getTableLocator()->clear();
         parent::setUp();
+        $this->mockUserIp();
+        $this->_accessKey = Configure::read('passbolt.webInstaller.accessKey');
+        Configure::write('passbolt.webInstaller.accessKey', 'test-web-installer-secret');
+        $this->session(['webinstaller' => ['accessAuthorized' => WebInstallerAccess::authorizationFingerprint('test-web-installer-secret')]]);
         $this->_recover = false;
         $this->Subscriptions = TableRegistry::getTableLocator()->get('Passbolt/Subscription.Subscriptions');
     }
@@ -55,6 +61,11 @@ class WebInstallerIntegrationTestCase extends AppIntegrationTestCase
             } else {
                 Configure::delete('passbolt.webInstaller.configured');
             }
+        }
+        if ($this->_accessKey !== null) {
+            Configure::write('passbolt.webInstaller.accessKey', $this->_accessKey);
+        } else {
+            Configure::delete('passbolt.webInstaller.accessKey');
         }
         if ($this->isWebInstallerFriendly()) {
             $this->restoreTestConnection();
@@ -104,7 +115,10 @@ class WebInstallerIntegrationTestCase extends AppIntegrationTestCase
 
     public function initWebInstallerSession(?array $options = [])
     {
-        $session = ['initialized' => true] + $options;
+        $session = [
+            'accessAuthorized' => WebInstallerAccess::authorizationFingerprint('test-web-installer-secret'),
+            'initialized' => true,
+        ] + $options;
         $this->session(['webinstaller' => $session]);
     }
 

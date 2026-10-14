@@ -25,6 +25,7 @@ use Passbolt\WebInstaller\Middleware\WebInstallerMiddleware;
 use Passbolt\WebInstaller\Service\Healthcheck\PassboltConfigWritableWebInstallerHealthcheck;
 use Passbolt\WebInstaller\Service\Healthcheck\PrivateKeyWritableWebInstallerHealthcheck;
 use Passbolt\WebInstaller\Service\Healthcheck\PublicKeyWritableWebInstallerHealthcheck;
+use Passbolt\WebInstaller\Service\WebInstallerAccessKeyRateLimiterService;
 use Passbolt\WebInstaller\Service\WebInstallerChangeConfigFolderPermissionService;
 
 class WebInstallerPlugin extends BasePlugin
@@ -49,6 +50,7 @@ class WebInstallerPlugin extends BasePlugin
             )
             ->addArgument(CONFIG);
 
+        $container->add(WebInstallerAccessKeyRateLimiterService::class);
         $container->add(PassboltConfigWritableWebInstallerHealthcheck::class);
         $container->add(PublicKeyWritableWebInstallerHealthcheck::class);
         $container->add(PrivateKeyWritableWebInstallerHealthcheck::class);

@@ -248,7 +248,7 @@ class EmailControllerTest extends WebInstallerIntegrationTestCase
     {
         // Admin already in DB → skip account_creation. Subscription is the
         // next step on every edition (WP 7.4).
-        $this->session(['webinstaller' => ['initialized' => true, 'hasAdmin' => true]]);
+        $this->initWebInstallerSession(['hasAdmin' => true]);
 
         $this->post('/install/email', [
             'sender_name' => 'Passbolt Test',
